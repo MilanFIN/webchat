@@ -1,0 +1,46 @@
+
+<!doctype html>
+<html>
+  <head>
+    <title>asdkuraa</title>
+    <style>
+	  body {background: rgb(200,200,200);}
+      form { background: rgb(200,200,200); padding: 10px; position: fixed; bottom: 10px; width: 100%; }
+      ul {}
+      form input { border: 0; padding: 10px; width: 80%;}
+      form button { width: 10%; background: rgb(255, 0, 0); border: none; padding: 10px; border-radius: 8px;}
+    </style>
+  </head>
+  <body id="body">
+	<div id="div0" style="position: relative; padding-bottom: 60px; overflow-y:scroll; overflow: hidden; width: 90%;" >
+    <ul id="messages">    
+    </ul>
+    </div>
+    <div id="div1">
+    <form id="form0" action="">
+      <input id="m" autocomplete="off" /><button>Send</button>
+    </form>
+    </div>
+	<script src="/socket.io/socket.io.js"></script>
+	<script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+	<script>
+	  $(function () {
+		var socket = io();
+		$('form').submit(function(){
+		  socket.emit('msg', $('#m').val());
+		  $('#m').val('');
+
+		  return false;
+		});
+		  socket.on('msg', function(msg){
+		  $('#messages').append($('<li style="list-style-type:none;">').text(msg));
+				  
+		  //tää ei jostain syystä toimi oikein  
+		  $('div0').scrollTop($('div0').scrollHeight);
+
+		});
+	  });
+	</script>	
+  </body>
+</html>
+    
