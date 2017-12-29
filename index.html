@@ -2,25 +2,39 @@
 <!doctype html>
 <html>
   <head>
-    <title>asdkuraa</title>
-    <style>
-	  body {background: rgb(200,200,200);}
-      form { background: rgb(200,200,200); padding: 10px; position: fixed; bottom: 10px; width: 100%; }
-      ul {}
-      form input { border: 0; padding: 10px; width: 80%;}
-      form button { width: 10%; background: rgb(255, 0, 0); border: none; padding: 10px; border-radius: 8px;}
-    </style>
-  </head>
-  <body id="body">
-	<div id="div0" style="position: relative; padding-bottom: 60px; overflow-y:scroll; overflow: hidden; width: 90%;" >
-    <ul id="messages">    
-    </ul>
-    </div>
-    <div id="div1">
-    <form id="form0" action="">
-      <input id="m" autocomplete="off" /><button>Send</button>
-    </form>
-    </div>
+    <title>WebChat</title>
+		<link rel="stylesheet" type="text/css" href="stylesheets/main.css">
+		<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+	</head>
+	<body>
+		<div class="navbar navbar-default navbar-static-top">
+			<div class="container">
+				<a href="" class="navbar-brand">WebChat</a>
+			</div>
+		</div>
+
+		<div class="container">
+			<div class="jumbotron">
+				<div class="container">
+					<div id="div0">
+						<ul id="messages">    
+						</ul>
+					</div>
+					<hr>
+					<div id="div1">
+						<form id="form0" action="">
+							<input id="m" autocomplete="off" placeholder="Write your message..." />
+							<button class="btn btn-default">Send</button>
+						</form>
+					</div>
+			</div>
+			</div>
+		</div>
+	</body>
+
+
+
 	<script src="/socket.io/socket.io.js"></script>
 	<script src="https://code.jquery.com/jquery-1.11.1.js"></script>
 	<script>

@@ -1,11 +1,16 @@
-var app = require('express')();
-var http = require('http').Server(app);
-var io = require('socket.io')(http);
+var express = require('express'),
+app 		= express(),
+http 		= require('http').Server(app),
+config		= require('./config/config'),
+io 			= require('socket.io')(http);
 
 
 var nonPaired = [];
 var first = [];
 var second = [];
+
+
+app.use(express.static(__dirname + '/public'));
 
 app.get('/', function(req, res){
 res.sendFile(__dirname + '/index.html');});
@@ -88,7 +93,7 @@ io.on('connection', function(socket){
 });
 
 
-http.listen(3000, function(){
-  console.log('listening on *:3000');
+http.listen(config.port, function(){
+  console.log(`Listening on port ${config.port}`);
 });
     

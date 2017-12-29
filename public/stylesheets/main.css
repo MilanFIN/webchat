@@ -1,0 +1,54 @@
+body {
+    background: rgb(200,200,200);
+}
+
+ul {}
+
+form input { 
+    border: 0; 
+    padding: 10px; 
+    width: 50%;
+    margin-left: 40px; 
+}
+
+#div1 {
+    align-items: center;
+}
+
+form button .btn { 
+    width: 10%; 
+    background: rgb(255, 0, 0); 
+    border: none; padding: 10px; 
+    border-radius: 8px;
+}
+.container .jumbotron {
+    color: #fff;
+    background: #293a46;
+    color: #1bc98e;
+}
+
+.navbar.navbar-default {
+    background: #293a46;
+}
+
+.container .navbar-brand {
+    color: #fff!important;
+}
+
+.btn.btn-default {
+    background:#38003c;
+    color: #fff;
+    border-color: transparent;
+    padding: 10px; 
+    margin: 0;
+}
+
+input {
+    border-radius: 5px;
+}
+
+.jumbotron .container {
+    margin-left: 10px;
+    padding-left: 10px;
+}
+
