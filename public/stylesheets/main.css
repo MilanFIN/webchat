@@ -2,7 +2,11 @@ body {
     background: rgb(200,200,200);
 }
 
-ul {}
+#messages {
+	height: 300px;
+	overflow: hidden;
+	overflow-y: scroll;
+}
 
 form input { 
     border: 0; 
