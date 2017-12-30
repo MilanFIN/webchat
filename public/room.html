@@ -45,14 +45,16 @@
 		  socket.emit('roomMsg', $('#m').val());
 		  $('#m').val('');
 
-		  return false; //estää sivupäivityksen jostain syystä, mutta toimii
+		  return false; 
 		});
 		  socket.on('roomMsg', function(msg){
 		  $('#messages').append($('<li style="list-style-type:none;">').text(msg));
 				  
-		  //pidetään viestihistorian viimeisimmät alkiot näkyvillä  
 		  $('#messages').scrollTop($('#messages')[0].scrollHeight);
 
+		});
+		socket.on('connected', function(){
+		socket.emit('requestRoom', '1'); //request to be put into a specific room
 		});
 	  });
 	</script>	
