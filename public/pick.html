@@ -1,0 +1,71 @@
+
+<!doctype html>
+<html>
+  <head>
+    <title>WebChat</title>
+		<link rel="stylesheet" type="text/css" href="stylesheets/main.css">
+		<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+	</head>
+	<body>
+		<div class="navbar navbar-default navbar-static-top">
+			<div class="container">
+				<a href="index.html" class="navbar-brand">Pairs</a>
+				<a href="pick.html" class="navbar-brand"> Rooms</a>
+			</div>
+		</div>
+
+		<div class="container">
+			<div class="jumbotron">
+				<div class="container">
+					<div id="div0">
+						<select id="rooms">  
+
+
+  
+						</select>
+					</div>
+					
+					<div id="div1">
+						<form id="form0" action="">
+							<button class="btn btn-default">Choose</button>
+						</form>
+					</div>
+					<hr>
+					<div id="div2">
+						<form id="form1" action="">
+							<input id="roomName" autocomplete="off" placeholder="Name of the new room..." />
+							<button class="btn btn-default">Create a new room</button>
+						</form>
+					</div>
+			</div>
+			</div>
+		</div>
+	</body>
+
+
+
+	<script src="/socket.io/socket.io.js"></script>
+	<script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+	<script>
+	  $(function () {
+		var socket = io();
+		$('#form1').submit(function(){
+		  socket.emit('create', $('#roomName').val());
+		  $('#RoomName').val('');
+          window.location.href = 'room.html';
+		  return false; //estää sivupäivityksen jostain syystä, mutta toimii
+		});
+		socket.on('populate', function(name, size){
+			var select = document.getElementById('rooms');
+			var newOption = document.createElement('option');
+			newOption.text = name + ': ' + size + ' people';
+			select.add(newOption);
+		});
+		
+
+	  });
+	</script>	
+  </body>
+</html>
+    

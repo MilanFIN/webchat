@@ -19,6 +19,10 @@ form input {
     align-items: center;
 }
 
+#div2 {
+	align-items: center;
+}
+
 form button .btn { 
     width: 10%; 
     background: rgb(255, 0, 0); 
