@@ -56,6 +56,9 @@
 		socket.on('connected', function(){
 			socket.emit('roomConnection', var id = req.query.id;); //request to be put into a specific room
 		});
+		socket.on('roomInfo', function(name, size){
+			//do stuff with the name and size (put them somewhere visible)
+		});
 	  });
 	</script>	
   </body>

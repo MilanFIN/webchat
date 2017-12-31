@@ -54,9 +54,14 @@ io.on('connection', function(socket){
 		}
 		//socket.emit('populate', "asd" , '10');
 	});
+	
 	//a connection estabilished on the room page
 	socket.on('roomConnection', function(roomId){
-		socket.emit('roomInfo', 'tässä sit joskus jotain?');
+		if (roomId < rooms.length){
+			rooms[roomId].participants.push(socket.id);
+			//relay room name and size
+			socket.emit('roomInfo', rooms[roomId].name, rooms[roomId].participants.length);
+		}
 	});
 	
 	
@@ -115,15 +120,36 @@ io.on('connection', function(socket){
 	});
 	
 	
-	//create a new room to the rooms list, todo
+	//create a new room to the rooms list
+	//only requirement is that the name does not already exist
 	socket.on('create', function(name){
-		var newRoom = {};
-		newRoom.name = name;
-		newRoom.participants = [];
-		newRoom.participants.push(socket.id);
-		rooms.push(newRoom);
-	});
+		var found = false;
+		for (i = 0; i < rooms.length; i++){
+			if (rooms[i].name == name){
+				found = true;
+			}
+		}
+		if (!found){
+			var newRoom = {};
+			newRoom.name = name;
+			newRoom.participants = [];
+			newRoom.participants.push(socket.id);
+			rooms.push(newRoom);
+			socket.emit('moveToRoom', rooms.length-1);
 
+		}
+	});
+	//requested a specific room, check if available, and tell the index
+	socket.on('requestRoom', function(name){
+		console.log('room requested ' + name);
+
+		for (i = 0; i < rooms.length; i++){
+			if (rooms[i].name == name){
+				socket.emit('moveToRoom', i);
+				break;
+			}
+		}
+	});
 	
 	
 	socket.on('log', function (msg0){

@@ -18,21 +18,17 @@
 		<div class="container">
 			<div class="jumbotron">
 				<div class="container">
+
 					<div id="div0">
-						<select id="rooms">  
 
-
-  
-						</select>
-					</div>
-					
-					<div id="div1">
 						<form id="form0" action="">
-							<button class="btn btn-default">Choose</button>
+							<select id="rooms">  
+							</select>
+							<button type = "submit" class="btn btn-default">Choose</button>
 						</form>
 					</div>
 					<hr>
-					<div id="div2">
+					<div id="div1">
 						<form id="form1" action="">
 							<input id="roomName" autocomplete="off" placeholder="Name of the new room..." />
 							<button class="btn btn-default">Create a new room</button>
@@ -50,12 +46,29 @@
 	<script>
 	  $(function () {
 		var socket = io();
+		
+		$('#form0').submit(function(){
+			
+			var selectIndex = document.getElementById('rooms').selectedIndex;
+
+			if (selectIndex != -1){//true
+				
+				var roomName = document.getElementById('rooms').options[selectIndex].value;
+				
+				socket.emit('requestRoom', roomName);
+
+			}
+
+			return false; //estää sivupäivityksen jostain syystä, mutta toimii
+		});
+		
 		$('#form1').submit(function(){
 		  socket.emit('create', $('#roomName').val());
 		  $('#RoomName').val('');
-          window.location.href = 'room.html';
 		  return false; //estää sivupäivityksen jostain syystä, mutta toimii
 		});
+
+		
 		socket.on('connected', function(){
 			socket.emit('roomPickConnection');
 		});
@@ -63,11 +76,18 @@
 			var select = document.getElementById('rooms');
 			var newOption = document.createElement('option');
 			newOption.text = name + ': ' + size + ' people';
+			newOption.value = name;
 			select.add(newOption);
+		});
+		socket.on('moveToRoom', function(id) {
+			window.location.href = 'room.html?roomId=' + id;
+
 		});
 		
 
 	  });
+	  
+	
 	</script>	
   </body>
 </html>
