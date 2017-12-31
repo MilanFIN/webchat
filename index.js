@@ -12,7 +12,7 @@ var second = [];
 
 
 //relevant to rooms
-var rooms = []; //meant to include objects with the attributes: name, participants[socketids here]
+var rooms = []; //rooms[{name, participants[{id, name}]}]
 
 
 app.use(express.static(__dirname + '/public'));
@@ -58,12 +58,30 @@ io.on('connection', function(socket){
 	//a connection estabilished on the room page
 	socket.on('roomConnection', function(roomId){
 		if (roomId < rooms.length){
-			rooms[roomId].participants.push(socket.id);
+			newParticipant = {};
+			newParticipant.id = socket.id;
+			
+			//find out the smallest number that is free to be used as a name;
+			var usableNumber = 1;
+			for (i = 0; i < rooms[roomId].participants.length; i++){
+				if (rooms[roomId].participants[i].number == usableNumber){
+					++usableNumber;
+					//start iteration again...
+					i = 0;
+				}
+
+			}
+			newParticipant.number = usableNumber;
+			console.log(usableNumber);
+			
+			rooms[roomId].participants.push(newParticipant);
 			for (i = 0; i < rooms[roomId].participants.length; i++){
 				//relay room name and size to everyone in the room, as it may have changed
-				io.to(rooms[roomId].participants[i]).emit('roomInfo', rooms[roomId].name, rooms[roomId].participants.length);
+				io.to(rooms[roomId].participants[i].id).emit('roomInfo', rooms[roomId].name, rooms[roomId].participants.length);
+				if (rooms[roomId].participants[i].id != socket.id){
+					io.to(rooms[roomId].participants[i].id).emit('roomMsg', 'A new user joined the room. He was assigned the name: ' + usableNumber);
+				}
 			}
-			console.log('joined room... ' + roomId)
 		}
 	});
 	
@@ -103,10 +121,11 @@ io.on('connection', function(socket){
 			var personNumber = 0;
 			for (i = 0; i < rooms.length; i++){
 
-				if (rooms[i].participants.indexOf(socket.id) != -1){
+
+				if (rooms[i].participants.findIndex(i => i.id === socket.id) != -1){
 					//found in some room, remove from there
-					personNumber = rooms[i].participants.indexOf(socket.id) + 1;
-					rooms[i].participants.splice(rooms[i].participants.indexOf(socket.id), 1);
+					personNumber = rooms[i].participants[rooms[i].participants.findIndex(i => i.id === socket.id)].number;
+					rooms[i].participants.splice(rooms[i].participants.findIndex(i => i.id === socket.id), 1);
 					found = true;
 				}
 					
@@ -114,8 +133,8 @@ io.on('connection', function(socket){
 					//tell others that the person left
 
 					for (j = 0; j < rooms[i].participants.length; j++){
-						io.to(rooms[i].participants[j]).emit('roomMsg', personNumber + ' left the room. Others numbers might have changed');
-						io.to(rooms[i].participants[j]).emit('roomInfo', rooms[i].name, rooms[i].participants.length);
+						io.to(rooms[i].participants[j].id).emit('roomMsg', personNumber + ' left the room.');
+						io.to(rooms[i].participants[j].id).emit('roomInfo', rooms[i].name, rooms[i].participants.length);
 
 					}
 					if (rooms[i].participants.length == 0){
@@ -187,12 +206,13 @@ io.on('connection', function(socket){
 
 				for (j = 0; j < rooms[i].participants.length; j++){
 
-					if (rooms[i].participants[j] == socket.id){
+					if (rooms[i].participants[j].id == socket.id){
 						socket.emit('roomMsg', 'you: ' + msg)
 					}
-					else {
-						var personNumber = j+1;
-						io.to(rooms[i].participants[j]).emit('roomMsg', personNumber + ": " + msg);
+					else {////TTTÄÄÄÄÄÄ
+						
+						var personNumber = rooms[i].participants[rooms[i].participants.findIndex(i => i.id === socket.id)].number;
+						io.to(rooms[i].participants[j].id).emit('roomMsg', personNumber + ": " + msg);
 					}
 				}
 				break;
