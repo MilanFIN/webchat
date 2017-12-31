@@ -47,11 +47,18 @@
 
 		  return false; //estää sivupäivityksen jostain syystä, mutta toimii
 		});
-		  socket.on('msg', function(msg){
-		  $('#messages').append($('<li style="list-style-type:none;">').text(msg));
+		
+		socket.on('connected', function(){
+		
+			socket.emit('pairConnection');
+		
+		});
+		
+		socket.on('msg', function(msg){
+			$('#messages').append($('<li style="list-style-type:none;">').text(msg));
 				  
-		  //pidetään viestihistorian viimeisimmät alkiot näkyvillä  
-		  $('#messages').scrollTop($('#messages')[0].scrollHeight);
+			//pidetään viestihistorian viimeisimmät alkiot näkyvillä  
+			$('#messages').scrollTop($('#messages')[0].scrollHeight);
 
 		});
 	  });

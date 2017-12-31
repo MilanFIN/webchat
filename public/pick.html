@@ -56,6 +56,9 @@
           window.location.href = 'room.html';
 		  return false; //estää sivupäivityksen jostain syystä, mutta toimii
 		});
+		socket.on('connection', function(){
+			socket.emit('roomPickConnection');
+		});
 		socket.on('populate', function(name, size){
 			var select = document.getElementById('rooms');
 			var newOption = document.createElement('option');
