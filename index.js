@@ -12,7 +12,7 @@ var second = [];
 
 
 //relevant to rooms
-var rooms = [];
+var rooms = []; //meant to include objects with the attributes: name, participants[socketids here]
 
 
 app.use(express.static(__dirname + '/public'));
@@ -48,7 +48,11 @@ io.on('connection', function(socket){
 	socket.on('roomPickConnection', function(){
 		//inform the new client of the existing rooms
 		//(for loop here later)
-		socket.emit('populate', "asd" , '10');
+		console.log('emitting room info');
+		for(i = 0; i < rooms.length; i++){
+			socket.emit('populate', rooms[i].name, rooms[i].participants.length);
+		}
+		//socket.emit('populate', "asd" , '10');
 	});
 	//a connection estabilished on the room page
 	socket.on('roomConnection', function(roomId){
@@ -113,7 +117,11 @@ io.on('connection', function(socket){
 	
 	//create a new room to the rooms list, todo
 	socket.on('create', function(name){
-		console.log("created room with name " + name);
+		var newRoom = {};
+		newRoom.name = name;
+		newRoom.participants = [];
+		newRoom.participants.push(socket.id);
+		rooms.push(newRoom);
 	});
 
 	
