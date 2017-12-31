@@ -18,6 +18,12 @@
 		<div class="container">
 			<div class="jumbotron">
 				<div class="container">
+										
+					<div id="div2">
+						<p id="roomName">Room name</p>
+						<p id="bodycount"> Number of people</p>
+
+					</div>
 					<div id="div0">
 						<ul id="messages">    
 						</ul>
@@ -39,10 +45,25 @@
 	<script src="/socket.io/socket.io.js"></script>
 	<script src="https://code.jquery.com/jquery-1.11.1.js"></script>
 	<script>
+		
+		
+	  function getParam(name, url) {
+		  //copy-pasted, dunno how this is supposed to work
+		if (!url) url = window.location.href;
+		name = name.replace(/[\[\]]/g, "\\$&");
+		var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+			results = regex.exec(url);
+		if (!results) return null;
+		if (!results[2]) return '';
+		return decodeURIComponent(results[2].replace(/\+/g, " "));
+	}
+		
+		
+		
 	  $(function () {
 		var socket = io();
 		$('#form0').submit(function(){
-		  socket.emit('roomMsg', $('#m').val());
+		  socket.emit('roomMsg', $('#m').val(), document.getElementById('roomName').innerHTML);
 		  $('#m').val('');
 
 		  return false; 
@@ -54,12 +75,18 @@
 
 		});
 		socket.on('connected', function(){
-			socket.emit('roomConnection', var id = req.query.id;); //request to be put into a specific room
+			socket.emit('roomConnection', getParam('roomId')); //request to be put into a specific room
 		});
 		socket.on('roomInfo', function(name, size){
-			//do stuff with the name and size (put them somewhere visible)
+
+			document.getElementById('roomName').innerHTML = name;
+
+			document.getElementById('bodycount').innerHTML = size + ' people';
+
 		});
 	  });
+	  
+	  
 	</script>	
   </body>
 </html>

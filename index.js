@@ -59,8 +59,11 @@ io.on('connection', function(socket){
 	socket.on('roomConnection', function(roomId){
 		if (roomId < rooms.length){
 			rooms[roomId].participants.push(socket.id);
-			//relay room name and size
-			socket.emit('roomInfo', rooms[roomId].name, rooms[roomId].participants.length);
+			for (i = 0; i < rooms[roomId].participants.length; i++){
+				//relay room name and size to everyone in the room, as it may have changed
+				io.to(rooms[roomId].participants[i]).emit('roomInfo', rooms[roomId].name, rooms[roomId].participants.length);
+			}
+			console.log('joined room... ' + roomId)
 		}
 	});
 	
@@ -92,10 +95,37 @@ io.on('connection', function(socket){
 			
 			io.to(first[index]).emit('msg', "your pair left, waiting for a new one...");
 			first.splice(index, 1);
-			
 		}
 		
-		
+		else {
+			//finally must check if the user was in any rooms
+			var found = false;
+			var personNumber = 0;
+			for (i = 0; i < rooms.length; i++){
+
+				if (rooms[i].participants.indexOf(socket.id) != -1){
+					//found in some room, remove from there
+					personNumber = rooms[i].participants.indexOf(socket.id) + 1;
+					rooms[i].participants.splice(rooms[i].participants.indexOf(socket.id), 1);
+					found = true;
+				}
+					
+				if (found){
+					//tell others that the person left
+
+					for (j = 0; j < rooms[i].participants.length; j++){
+						io.to(rooms[i].participants[j]).emit('roomMsg', personNumber + ' left the room. Others numbers might have changed');
+						io.to(rooms[i].participants[j]).emit('roomInfo', rooms[i].name, rooms[i].participants.length);
+
+					}
+					if (rooms[i].participants.length == 0){
+						rooms.splice(i, 1);
+					}
+					break;
+				}
+
+			}
+		}		
 
 	});
 	//a pair sent something
@@ -133,7 +163,6 @@ io.on('connection', function(socket){
 			var newRoom = {};
 			newRoom.name = name;
 			newRoom.participants = [];
-			newRoom.participants.push(socket.id);
 			rooms.push(newRoom);
 			socket.emit('moveToRoom', rooms.length-1);
 
@@ -150,6 +179,27 @@ io.on('connection', function(socket){
 			}
 		}
 	});
+	
+	//message to others on the room
+	socket.on('roomMsg', function(msg, roomName){
+		for (i = 0; i < rooms.length; i++){
+			if (rooms[i].name == roomName){
+
+				for (j = 0; j < rooms[i].participants.length; j++){
+
+					if (rooms[i].participants[j] == socket.id){
+						socket.emit('roomMsg', 'you: ' + msg)
+					}
+					else {
+						var personNumber = j+1;
+						io.to(rooms[i].participants[j]).emit('roomMsg', personNumber + ": " + msg);
+					}
+				}
+				break;
+			}
+		}
+	});
+	
 	
 	
 	socket.on('log', function (msg0){
